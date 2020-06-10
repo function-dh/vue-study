@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>title</title>
+	<meta name="keywords" content="">
+	<meta name="description" content="">
+	<meta name="author" content="">
+</head>
+<body>
+	<div id="app">
+		<eventbus></eventbus>
+	</div>
+	<div id="footer">
+		<localdiv v-on:event-num="eventlocal"></localdiv>
+	</div>
+	<script src="https://cdn.jsdelivr.net/npm/vue@2.5.2/dist/vue.js"></script>
+	<script>
+		// 이벤트 버스로 활용할 새 인스턴스 생성
+		var eventBus = new Vue
+
+		Vue.component('eventbus',{
+			template: '<div>이벤트 버스 테스트입니다. <button v-on:click="showlog">클릭</button></div>',
+			methods: {
+				showlog : function(){
+					eventBus.$emit('eventNum', 6757)  // 상위 컴포넌트로 전달
+				}
+			},
+		})
+
+		var localdiv = {
+			template : '<div>난 로컬이야<button v-on:click="event">눌러봐</button></div>',
+			methods : {
+				event : function(){
+					this.$emit('event-num')
+				}
+			}
+		}
+
+		var app = new Vue({
+			el : '#app',
+			created: function() {
+				eventBus.$on('eventNum', function(num){  // $on으로 하위에서 전달한 값을 받음
+					console.log('이벤트 숫자는 '+num+'입니다')
+				})
+			}
+		})
+		var footer = new Vue({
+			el : '#footer',
+			components : {
+				'localdiv' : localdiv
+			},
+			methods : {
+				eventlocal : function(){
+					console.log('상위 메소드 동작')
+				}
+			}
+		})
+	</script>
+</body>
+</html>
